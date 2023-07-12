@@ -19,10 +19,18 @@ jobs:
         with:
           use-public-rspm: true
 
+      - name: Install dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: |
+            any::broom
+            any::ggplot2
+            any::knitr
+            any::gt
+            any::gtsummary
+
       - name: Update readme
-        run: |
-          install.packages("broom", "ggplot2", "knitr", "gt", "gtsummary") 
-          source("process_file.R")
+        run: source("process_file.R")
         shell: Rscript {0}
         env: 
           README_EXECUTABLE: R/example.R # Change this to the location of your modeling script
