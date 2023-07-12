@@ -18,12 +18,15 @@ jobs:
         uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
-
+      - name: Create RLIB
+        run: |
+          export R_LIBS=./RLibrary
+          mkdir -p $R_LIBS
       - name: Update readme
         run: |
-          install.packages("broom", "knitr", "ggplot2", "gt", "gtsummary")
+          install.packages("broom", "knitr", "ggplot2", "gt", "gtsummary", lib=Sys.getenv("R_LIBS"))
           source("process_file.R")
-        shell: sudo Rscript {0}
+        shell: Rscript {0}
         env: 
           README_EXECUTABLE: R/example.R # Change this to the location of your modeling script
           COEF_PLOT: FALSE # Whether to plot model coefficients alongside each other in README
