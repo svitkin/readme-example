@@ -1,1 +1,3 @@
-Package: broom
+Package: Readme Example
+Depends: 
+    R (>= 4.0)
