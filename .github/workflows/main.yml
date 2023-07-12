@@ -12,7 +12,7 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
@@ -23,7 +23,7 @@ jobs:
         run: |
           install.packages("broom", "knitr", "ggplot2", "gt", "gtsummary")
           source("process_file.R")
-        shell: Rscript {0}
+        shell: sudo Rscript {0}
         env: 
           README_EXECUTABLE: R/example.R # Change this to the location of your modeling script
           COEF_PLOT: FALSE # Whether to plot model coefficients alongside each other in README
