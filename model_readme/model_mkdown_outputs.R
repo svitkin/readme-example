@@ -1,3 +1,9 @@
+to_html <- function(gt_obj) {
+  gt_obj |> 
+    gt::as_raw_html() |> 
+    gsub(pattern = "\n    \n    ", replacement = "\n    ")
+}
+
 create_coef_plot <- function(tidy_model) {
   img_dir <- file.path("model_readme", "img")
   if (!dir.exists(img_dir)) dir.create(img_dir)
@@ -27,7 +33,7 @@ create_coef_output <- function(models) {
     model_table <- 
       tbls[[1]] |> 
       gtsummary::as_gt() |> 
-      gt::as_raw_html()
+      to_html()
   } else {
     if (length(model_names) == length(tbls)) {
       spanner <- model_names
@@ -38,7 +44,7 @@ create_coef_output <- function(models) {
       gtsummary::tbl_merge(tbls, 
                            tab_spanner = spanner) |> 
       gtsummary::as_gt() |> 
-      gt::as_raw_html()
+      to_html()
   }
   tidy_models <- lapply(1:length(models), function(i) {
     tidy_m <- broom::tidy(models[[i]], conf.int = TRUE)
@@ -78,7 +84,7 @@ create_model_overview_output <- function(models) {
   if (length(models) == 1) {
     model_table <- model_table |> gt::tab_options(column_labels.hidden = TRUE)
   }
-  paste0("### Summary\n", model_table |> gt::as_raw_html())
+  paste0("### Summary\n", model_table |> to_html())
 }
 
 create_residuals_plot <- function(models) {
