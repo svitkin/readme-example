@@ -1,6 +1,7 @@
 to_html <- function(gt_obj) {
   gt_obj |> 
     gt::as_raw_html() |> 
+    # Fix strange gt::as_raw_html processing that causes markkdown render to fail
     gsub(pattern = "\n    \n    ", replacement = "\n    ")
 }
 
