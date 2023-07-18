@@ -1,3 +1,7 @@
+# About
+
+This is an example repository for fully automated model documentation through a README file.
+
 # Models
 ## MPG Model with mtcars
 ### Summary
