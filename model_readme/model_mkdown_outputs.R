@@ -32,7 +32,7 @@ create_coef_output <- function(models) {
     if (length(model_names) == length(tbls)) {
       spanner <- model_names
     } else {
-      spanner <- unlist(lapply(1:length(tbls), function(i) sprintf("m%s", i))) 
+      spanner <- ulapply(1:length(tbls), function(i) sprintf("m%s", i))
     }
     model_table <- 
       gtsummary::tbl_merge(tbls, 
@@ -40,7 +40,7 @@ create_coef_output <- function(models) {
       gtsummary::as_gt() |> 
       gt::as_raw_html()
   }
-  tidy_models <- lapply(seq_along(models), function(i) {
+  tidy_models <- lapply(1:length(models), function(i) {
     tidy_m <- broom::tidy(models[[i]], conf.int = TRUE)
     if (length(models) > 1) {
       tidy_m[, "Model Name"] <- model_names[i]

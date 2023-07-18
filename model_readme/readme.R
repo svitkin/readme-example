@@ -3,10 +3,10 @@ source("model_readme/model_mkdown_outputs.R")
 
 MODEL_HEADER <- "# Models"
 README <- "README.md"
-SPLITTER <- ";"
+README_MARKER <- "#~"
 
 is_readme <- function(lines) {
-  unlist(lapply(lines, function(line) startsWith(trimws(line), "#readme") || startsWith(trimws(line), "# readme")))
+  ulapply(lines, function(line) startsWith(trimws(line), README_MARKER))
 }
 
 conditionally_add_section_header <- function() {
@@ -86,6 +86,19 @@ extract_fn_call <- function(lines, readme_idx) {
   gsub(".+<-", "", fn_call)
 }
 
+get_header <- function(line) {
+  strsplit(line, README_MARKER)[[1]][2] |> 
+    gsub(pattern = "\\{.*\\}", "", replacement = "") |> 
+    trimws()
+}
+
+get_subheader <- function(line) {
+  headers <- strsplit(line, README_MARKER)[[1]][2]
+  regmatches(headers, regexpr("\\{.*\\}", headers)) |> 
+    gsub(pattern = "\\{|\\}", replacement = "") |>
+    trimws()
+}
+
 process_readme <- function(filename) {
   source(filename)
   conditionally_add_section_header()
@@ -93,40 +106,26 @@ process_readme <- function(filename) {
   lines <- readLines(con = con)
   readme_con <- file(README)
   current_readme <- readLines(con = readme_con)
-  model_number <- 1
   for (i in 1:length(lines)) {
     line <- lines[i]
     if (i < length(lines) & is_readme(line)) {
-      header_name <- trimws(strsplit(line, SPLITTER)[[1]][2])
-      has_explicit_header <- TRUE
-      if (is.na(header_name)) {
-        header_name <- sprintf("Model %s", model_number)
-        model_number <- model_number + 1
-        has_explicit_header <- FALSE
-      }
-      if (has_explicit_header) {
-        all_subsection_idxs <- which(unlist(lapply(lines, function(l) grepl(header_name, l) && is_readme(l))))
-      } else {
-        all_subsection_idxs <- i
-      }
-      all_subsection_headers <-  
-        strsplit(lines[all_subsection_idxs], SPLITTER) |>
-        lapply(function(string) trimws(string)[3]) |>
-        unlist()
-      fn_calls <- unlist(lapply(all_subsection_idxs, 
-                                function(idx) extract_fn_call(lines, idx)))
+      header_name <- get_header(line)
+      stopifnot(length(header_name) | !is.na(header_name))
+      all_subsection_idxs <- which(ulapply(lines, function(l) grepl(header_name, l) && is_readme(l)))
+      all_subsection_headers <- ulapply(lines[all_subsection_idxs], get_subheader)
+      fn_calls <- ulapply(all_subsection_idxs, 
+                                function(idx) extract_fn_call(lines, idx))
       if (length(all_subsection_headers) == length(fn_calls)) {
         model_list <-
           1:length(all_subsection_headers) |> 
-          lapply(function(idx) {
+          ulapply(function(idx) {
             sprintf('`%s` = %s', all_subsection_headers[idx], fn_calls[idx])
-          }) |> 
-          unlist() |> 
+          }) |>
           paste(collapse = ",") |> 
           sprintf(fmt = "list(%s)")
       } else {
         model_list <-
-          paste(all_subsection_models, collapse = ",") |> 
+          paste(fn_calls, collapse = ",") |> 
           sprintf(fmt = "list(%s)")
       }
       message("ADDING TO README: ", header_name)

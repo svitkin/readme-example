@@ -33,3 +33,8 @@ append_vector <- function(v, obj, idx) {
     append(v, obj, after = idx)
   }
 }
+
+ulapply <- function(l, f, ...) {
+  lapply(l, f, ...) |> 
+    unlist()
+}
