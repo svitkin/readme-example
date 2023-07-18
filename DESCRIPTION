@@ -1,7 +1,7 @@
-Package: Readme Example
+Package: readmeExample
+Title: Readme for Models
 Depends: 
     R (>= 4.0)
-    
 Suggests:
     ggplot2,
     broom,
