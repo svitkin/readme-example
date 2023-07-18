@@ -1,3 +1,10 @@
 Package: Readme Example
 Depends: 
     R (>= 4.0)
+    
+Suggests:
+    ggplot2,
+    broom,
+    digest,
+    gt,
+    gtsummary
