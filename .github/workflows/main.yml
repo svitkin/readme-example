@@ -32,4 +32,4 @@ jobs:
       - name: Commit & Push readme changes
         uses: actions-js/push@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GH_TOKEN }}
