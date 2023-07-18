@@ -1,4 +1,5 @@
 Package: readmeExample
+Version: 0.0.1
 Title: Readme for Models
 Depends: 
     R (>= 4.0)
