@@ -23,7 +23,7 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
 
       - name: Update readme
-        run: source("process_file.R")
+        run: source("model_readme/process_file.R")
         shell: Rscript {0}
         env: 
           README_EXECUTABLE: R/example.R # Change this to the location of your modeling script
