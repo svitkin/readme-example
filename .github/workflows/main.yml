@@ -34,4 +34,4 @@ jobs:
         uses: actions-js/push@master
         with:
           github_token: ${{ secrets.GH_TOKEN }}
-          message: 'chore: update model readme ${date} [skip ci]'
+          message: 'chore: update model readme [skip ci]'
