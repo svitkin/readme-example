@@ -21,34 +21,34 @@ conditionally_add_section_header <- function() {
   return(model_idx)
 }
 
+delete_current_model_section <- function() {
+  con <- file(README)
+  current_readme <- readLines(con = con)
+  model_idx <- which(current_readme == MODEL_HEADER)
+  rm_rows <- NA
+  headers_after_models <- intersect(which(startsWith(current_readme, "# ")), 
+                                    which(1:length(current_readme) > model_idx))
+  closing_idx <- ifelse(length(headers_after_models),
+                        headers_after_models[1], 
+                        length(current_readme))
+  rm_rows <- (model_idx + 1):(closing_idx)
+  current_readme <- current_readme[-rm_rows]
+  write(current_readme, file = README)
+  close(con)
+}
+
+
 add_model_to_readme <- function(current_readme, header_name, models) {
   model_idx <- which(current_readme == MODEL_HEADER)
   header_text <- paste0("## ", header_name)
+  # Append to end of Models section
+  headers_after_models <- intersect(which(startsWith(current_readme, "# ")), 
+                                    which(1:length(current_readme) > model_idx))
+  model_idx <- ifelse(length(headers_after_models),
+                      headers_after_models[1], 
+                      length(current_readme))
+  current_readme <- append_vector(current_readme, header_text, model_idx)
   header_idx <- which(current_readme == header_text)
-  header_exists <- length(header_idx)
-  if (!header_exists) {
-    # Append to end of Models section if new header
-    model_idx <- ifelse(which(startsWith(current_readme, "# ")) == model_idx,
-                        length(current_readme), 
-                        model_idx)
-    current_readme <- append_vector(current_readme, header_text, model_idx)
-    header_idx <- model_idx
-  } else {
-    # Find and delete current section
-    closing_idx <- header_idx
-    found_closing <- FALSE
-    while (!found_closing & closing_idx <= length(current_readme)) {
-      closing_idx <- closing_idx + 1
-      found_closing <- grepl("^## ", current_readme[closing_idx])
-    }
-    if (header_idx + 1 == closing_idx) {
-      rm_rows <- header_idx
-    } else {
-      rm_rows <- (header_idx + 1):(closing_idx - 1)
-    }
-    current_readme <- current_readme[-rm_rows]
-  }
-  
   # Add model outputs to section
   model_outputs <- c(
     try_catch_na(create_model_overview_output, models),
@@ -57,7 +57,7 @@ add_model_to_readme <- function(current_readme, header_name, models) {
   )
   offset <- 0
   for (i in 1:length(model_outputs)) {
-    offset <- ifelse(header_exists, i - 1, i)
+    offset <- i
     output <- model_outputs[i]
     if (!is.na(output)) {
       output_location <- header_idx + offset
@@ -99,39 +99,46 @@ get_subheader <- function(line) {
     trimws()
 }
 
+create_model_list <- function(subsection_headers, fn_calls) {
+  if (length(subsection_headers) == length(fn_calls)) {
+    1:length(subsection_headers) |> 
+      ulapply(function(idx) {
+        sprintf('`%s` = %s', subsection_headers[idx], fn_calls[idx])
+      }) |>
+      paste(collapse = ",") |> 
+      sprintf(fmt = "list(%s)")
+  } else {
+    paste(fn_calls, collapse = ",") |> 
+      sprintf(fmt = "list(%s)")
+  }
+}
+
 process_readme <- function(filename) {
   source(filename)
   conditionally_add_section_header()
+  delete_current_model_section()
   con <- file(filename)
   lines <- readLines(con = con)
   readme_con <- file(README)
   current_readme <- readLines(con = readme_con)
+  processed_headers <- c()
   for (i in 1:length(lines)) {
     line <- lines[i]
     if (i < length(lines) & is_readme(line)) {
       header_name <- get_header(line)
+      if (header_name %in% processed_headers) next
       stopifnot(length(header_name) | !is.na(header_name))
+      
       all_subsection_idxs <- which(ulapply(lines, function(l) grepl(header_name, l) && is_readme(l)))
       all_subsection_headers <- ulapply(lines[all_subsection_idxs], get_subheader)
       fn_calls <- ulapply(all_subsection_idxs, 
                                 function(idx) extract_fn_call(lines, idx))
-      if (length(all_subsection_headers) == length(fn_calls)) {
-        model_list <-
-          1:length(all_subsection_headers) |> 
-          ulapply(function(idx) {
-            sprintf('`%s` = %s', all_subsection_headers[idx], fn_calls[idx])
-          }) |>
-          paste(collapse = ",") |> 
-          sprintf(fmt = "list(%s)")
-      } else {
-        model_list <-
-          paste(fn_calls, collapse = ",") |> 
-          sprintf(fmt = "list(%s)")
-      }
+      model_list <- create_model_list(all_subsection_headers, fn_calls)
       message("ADDING TO README: ", header_name)
       fn_call <- sprintf("add_model_to_readme(current_readme, \"%s\", %s)",
                          header_name, model_list)
       current_readme <- eval(parse(text = fn_call))
+      processed_headers <- append(processed_headers, header_name)
     }
   }
   write(paste(current_readme, collapse = "\n"), file = README)
