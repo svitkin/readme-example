@@ -19,7 +19,12 @@ m <- lm(mpg ~ cyl + hp, data = mtcars)
 m <- lm(mpg ~ cyl + hp + am, data = mtcars)
 ```
 
-You can either source `model_readme/process_file.R` or push your change to automatically update the README. Code to automatically document is located in the `model_readme` directory. 
+You can either source `model_readme/process_file.R` or push your change to automatically update the README. Code to automatically document models is located in the `model_readme` directory. Currently, for a given section, the following is included in the README:
+
+- Model summary values from [glance](https://generics.r-lib.org/reference/glance.html)
+- Coefficient estimates from [tidy](https://generics.r-lib.org/reference/tidy.html)
+- Coefficient forest plot (OPTIONAL)
+- Residuals vs Fitted Values plot
 
 All documentation below is automatically generated with this repository.
 
