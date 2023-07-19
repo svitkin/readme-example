@@ -9,6 +9,16 @@ Modeling code is in `R/model.R`. To enrich your README with model documentation,
 m <- lm(mpg ~ cyl + hp, data = mtcars)
 ```
 
+To group multiple models into one section for comparison, use the same section name and explicitly name the model in `{}` brackets.
+
+```
+#~ Modeling MPG {Without AM}
+m <- lm(mpg ~ cyl + hp, data = mtcars)
+
+#~ Modeling MPG {With AM}
+m <- lm(mpg ~ cyl + hp + am, data = mtcars)
+```
+
 You can either source `model_readme/process_file.R` or push your change to automatically update the README. Code to automatically document is located in the `model_readme` directory. 
 
 All documentation below is automatically generated with this repository.
