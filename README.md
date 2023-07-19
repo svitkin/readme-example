@@ -1,6 +1,6 @@
 # About
 
-This is an example repository for fully automated model documentation through a README file.
+Template repository for fully automated model documentation through a README file. More details [here](https://svitkin.rbind.io/2023/07/on-automated-model-homepages/).
 
 # Models
 ## MPG Model with mtcars
