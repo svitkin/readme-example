@@ -1,6 +1,17 @@
 # About
 
-Template repository for fully automated model documentation through a README file. More details [here](https://svitkin.rbind.io/2023/07/on-automated-model-homepages/).
+A template repository for fully automated model documentation through a README file. Detailed blog post [here](https://svitkin.rbind.io/2023/07/on-automated-model-homepages/).
+
+Modeling code is in `R/model.R`. To enrich your README with model documentation, simply add a comment in the following format above the modeling call. 
+
+```
+#~ A Section Header I want the model results to go under
+m <- lm(mpg ~ cyl + hp, data = mtcars)
+```
+
+You can either source `model_readme/process_file.R` or push your change to automatically update the README. Code to automatically document is located in the `model_readme` directory. 
+
+All documentation below is automatically generated with this repository.
 
 # Models
 ## MPG Model with mtcars
