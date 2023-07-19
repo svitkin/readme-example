@@ -28,7 +28,7 @@ jobs:
         shell: Rscript {0}
         env: 
           README_EXECUTABLE: R/model.R # Change this to the location of your modeling script
-          COEF_PLOT: FALSE # Whether to plot model coefficients alongside each other in README
+          COEF_PLOT: TRUE # Whether to plot model coefficients alongside each other in README
 
       - name: Commit & Push readme changes
         uses: actions-js/push@master
