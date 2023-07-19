@@ -24,7 +24,7 @@ create_coef_plot <- function(tidy_model) {
     ggplot2::theme_classic() +
     ggplot2::labs(x = "Estimate (95% CI)", y = "Term")
   ggplot2::ggsave(file_path, plot=coef_plot, device="png", dpi = 75)
-  sprintf('![](%s)', file_path)
+  sprintf("\n![](%s)", file_path)
 }
 
 create_coef_output <- function(models) {
