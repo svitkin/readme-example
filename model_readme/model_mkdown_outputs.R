@@ -19,7 +19,7 @@ create_coef_plot <- function(tidy_model) {
   coef_plot <- 
     coef_plot +
     ggplot2::geom_point(ggplot2::aes(x=estimate), shape=15, size=3) +
-    ggplot2::geom_linerange(ggplot2::aes(xmin=conf.low, xmax=conf.high)) +
+    ggplot2::geom_errorbarh(ggplot2::aes(xmin=conf.low, xmax=conf.high, height = 0.05)) +
     ggplot2::geom_vline(xintercept = 0, linetype="dashed") + 
     ggplot2::theme_classic() +
     ggplot2::labs(x = "Estimate (95% CI)", y = "Term")
