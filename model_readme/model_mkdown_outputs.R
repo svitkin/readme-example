@@ -22,9 +22,11 @@ create_coef_plot <- function(tidy_model) {
     ggplot2::geom_errorbarh(ggplot2::aes(xmin=conf.low, xmax=conf.high, height = 0.05)) +
     ggplot2::geom_vline(xintercept = 0, linetype="dashed") + 
     ggplot2::theme_classic() +
-    ggplot2::labs(x = "Estimate (95% CI)", y = "Term")
-  ggplot2::ggsave(file_path, plot=coef_plot, device="png", dpi = 75)
-  sprintf("\n![](%s)", file_path)
+    ggplot2::labs(x = "Estimate (95% CI)", 
+                  y = "Term",
+                  title = "Coefficients Plot")
+  ggplot2::ggsave(file_path, plot=coef_plot, device="png", dpi = 100)
+  sprintf("\n![](%s)\n", file_path)
 }
 
 create_coef_output <- function(models) {
@@ -113,7 +115,7 @@ create_residuals_plot <- function(models) {
     ggplot2::theme_bw()
   
   if ("Model Name" %in% colnames(augmented_model)) {
-    res_plot <-res_plot + ggplot2::facet_grid(rows = ggplot2::vars(`Model Name`))
+    res_plot <- res_plot + ggplot2::facet_grid(rows = ggplot2::vars(`Model Name`))
   }
   ggplot2::ggsave(file_path, plot=res_plot, device="png", dpi = 100)
   paste0("### Residuals\n", sprintf("![](%s)", file_path))
